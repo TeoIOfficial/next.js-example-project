@@ -1,1 +1,1 @@
-Boilerplate
+Nexst.js-Redux-Bootstrap-SEO
