@@ -1,0 +1,35 @@
+@import "~bootstrap-icons/font/bootstrap-icons.css";
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+
+// $primary: purple;
+$breadcrumb-divider: quote(">");
+
+@import "~bootstrap/scss/mixins";
+@import "~bootstrap/scss/utilities";
+
+@import "~bootstrap/scss/root";
+@import "~bootstrap/scss/reboot";
+@import "~bootstrap/scss/type";
+@import "~bootstrap/scss/images";
+@import "~bootstrap/scss/containers";
+@import "~bootstrap/scss/grid";
+@import "~bootstrap/scss/tables";
+@import "~bootstrap/scss/buttons";
+@import "~bootstrap/scss/button-group";
+@import "~bootstrap/scss/nav";
+@import "~bootstrap/scss/navbar";
+@import "~bootstrap/scss/card";
+@import "~bootstrap/scss/accordion";
+@import "~bootstrap/scss/breadcrumb";
+@import "~bootstrap/scss/badge";
+@import "~bootstrap/scss/alert";
+@import "~bootstrap/scss/list-group";
+@import "~bootstrap/scss/tooltip";
+@import "~bootstrap/scss/forms";
+
+// Helpers
+@import "~bootstrap/scss/helpers";
+
+// Utilities
+@import "~bootstrap/scss/utilities/api";
