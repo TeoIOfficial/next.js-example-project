@@ -3,6 +3,7 @@ import {HYDRATE} from 'next-redux-wrapper';
 import cookie from 'js-cookie';
 import axios from 'axios';
 import Router from 'next/router';
+import routes from 'utils/routes';
 
 const name = 'auth';
 
@@ -27,7 +28,7 @@ export const login = createAsyncThunk(`${name}/login`, async (user = {}, {reject
 				path: '/',
 			});
 
-			Router.replace('/');
+			Router.replace(routes.home);
 		}
 	} catch (e) {
 		let errorMessage = e?.response?.data?.error ?? 'An error occurred.';
@@ -48,7 +49,7 @@ export const register = createAsyncThunk(`${name}/register`, async (user = {}, {
 				path: '/',
 			});
 
-			Router.replace('/');
+			Router.replace(routes.home);
 		}
 	} catch (e) {
 		let errorMessage = e?.response?.data?.error ?? 'An error occurred.';
@@ -62,7 +63,7 @@ export const logout = createAsyncThunk(`${name}/logout`, () => {
 		expires: 1,
 	});
 
-	Router.replace('/login');
+	Router.replace(routes.login);
 });
 
 export const authSlice = createSlice({

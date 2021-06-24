@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { useSelector } from "react-redux";
 import { selectUtils } from "store/slices/utilsSlice";
 import cn from 'classnames';
+import routes from 'utils/routes';
 
 export default function Breadcrumbs() {
 
@@ -15,8 +16,8 @@ export default function Breadcrumbs() {
 
     useEffect(() => {
         
-        if (router.asPath === '/') {
-            setBreadcrumbs([{ segment: 'Home', href: '/' }]);
+        if (router.asPath === routes.home) {
+            setBreadcrumbs([{ segment: 'Home', href: routes.home }]);
             return;
         }
 
@@ -24,7 +25,7 @@ export default function Breadcrumbs() {
             
         const pathArray = linkPath.map((path, i) => ({    
             segment: path || 'Home',
-            href: path ? linkPath.slice(0, i + 1).join('/') : '/'           
+            href: path ? linkPath.slice(0, i + 1).join('/') : routes.home           
         }));
         
         setBreadcrumbs(pathArray);

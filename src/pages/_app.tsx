@@ -1,4 +1,4 @@
-import App from 'next/app';
+import App, {AppProps, AppContext } from 'next/app';
 import cookie from "js-cookie";
 import cookies from 'next-cookies';
 import { getUserById } from 'store/slices/userSlice';
@@ -6,9 +6,9 @@ import { wrapper } from "store";
 import { isBrowser } from 'utils/helpers';
 import "styles/globals.scss";
 
-class MyApp extends App {
+class MyApp extends App<AppProps> {
 
-	static getInitialProps = wrapper.getInitialAppProps(store => async ({Component, ctx}) => {	
+	static getInitialProps = wrapper.getInitialAppProps(store => async ({Component, ctx}: AppContext ) => {	
 
 		// console.log(process.env.ENV_VAR_MAIN);
 		// console.log(process.env.ENV_VAR);

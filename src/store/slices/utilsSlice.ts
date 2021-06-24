@@ -1,5 +1,6 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import {HYDRATE} from 'next-redux-wrapper';
+import cookie from 'js-cookie';
 
 const name = 'utils';
 
@@ -25,7 +26,10 @@ export const changeTheme = createAsyncThunk(`${name}/changeTheme`, async (theme,
 		if (currentTheme === 'dark') newTheme = 'light';
 	}
 
-	localStorage.setItem('theme', newTheme);
+	cookie.set('theme', newTheme, {
+		expires: 1,
+		path: '/',
+	});
 
 	return newTheme;
 });

@@ -1,12 +1,14 @@
 import Head from "next/head";
 import Link from "next/link";
+import {NextPage} from 'next';
 import Layout from "components/Layout";
 import { selectUtils } from 'store/slices/utilsSlice';
 import { selectUser } from 'store/slices/userSlice';
 import { useSelector } from "react-redux";
+import routes from "utils/routes";
 
 
-export default function Home() {
+const Home: NextPage = () => {
 
 	const utils = useSelector(selectUtils);
 
@@ -28,13 +30,13 @@ export default function Home() {
 					<>
 						<h2 className="text-success">Feel free to:</h2>
 						<div className="shadow-lg p-5 mt-5 rounded-3 d-flex flex-column align-items-center bg-light">
-							<Link href="/login">
+							<Link href={routes.login}>
 								<a className="btn btn-primary btn-lg" title="This is an anchor title for SEO purposes">
 									Log in
 								</a>
 							</Link>
 							<span className="my-2">or</span>
-							<Link href="/register">
+							<Link href={routes.register}>
 								<a className="btn btn-primary btn-lg" title="This is an anchor title for SEO purposes">
 									Register a new account
 								</a>
@@ -46,3 +48,5 @@ export default function Home() {
 		</Layout>
 	);
 }
+
+export default Home;

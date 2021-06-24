@@ -1,16 +1,18 @@
 import { useState } from "react";
+import {NextPage} from 'next';
 import { useDispatch, useSelector } from "react-redux";
 import Head from "next/head";
 import { register, selectAuth } from "store/slices/authSlice";
 import Layout from "components/Layout";
 import { wrapper } from 'store';
+import routes from "utils/routes";
 
 export const getServerSideProps = wrapper.getServerSideProps(store => async () => {
 
     if (store.getState().user.isLoggedIn) {
         return {
             redirect: {
-                destination: '/',
+                destination: routes.home,
                 permanent: false,
             }
         }
@@ -18,7 +20,7 @@ export const getServerSideProps = wrapper.getServerSideProps(store => async () =
     
 });
 
-export default function Register() {
+const Register: NextPage = () => {
 
     const auth = useSelector(selectAuth);
     
@@ -70,3 +72,5 @@ export default function Register() {
 		</Layout>
     );
 }
+
+export default Register;

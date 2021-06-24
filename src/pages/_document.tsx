@@ -1,8 +1,8 @@
-import Document, { Html, Head, Main, NextScript } from 'next/document';
+import Document, { Html, Head, Main, NextScript, DocumentContext } from 'next/document';
 
 export default class MyDocument extends Document {
 
-    static async getInitialProps(ctx) {
+    static async getInitialProps(ctx: DocumentContext) {
       
         const initialProps = await Document.getInitialProps(ctx);
         
@@ -12,7 +12,7 @@ export default class MyDocument extends Document {
 
   render() {
     return (
-      <Html lang="en" dir="ltr">
+      <Html dir="ltr">
           <Head>
           <meta httpEquiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
@@ -37,6 +37,7 @@ export default class MyDocument extends Document {
           
           {/* Add these tags if you have multilingual website. Add tags for every language your website supports. */}
           <link rel="alternate" hrefLang="en" href="yourwebsite.com" />
+          <link rel="alternate" hrefLang="bg" href="yourwebsite.com/bg" />
           <link rel="alternate" hrefLang="x-default" href="yourwebsite.com" />
 
           {/* <base href="https://example.com/" /> */}
