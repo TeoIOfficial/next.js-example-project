@@ -22,7 +22,7 @@ export const login = createAsyncThunk(`${name}/login`, async (user = {}, {reject
 		let token = res?.data?.token;
 
 		if (token) {
-			cookie.set('token', token, {
+			cookie.set('token', 1, {
 				expires: 1,
 				path: '/',
 			});
@@ -43,7 +43,7 @@ export const register = createAsyncThunk(`${name}/register`, async (user = {}, {
 		let token = res?.data?.token;
 
 		if (token) {
-			cookie.set('token', token, {
+			cookie.set('token', 1, {
 				expires: 1,
 				path: '/',
 			});

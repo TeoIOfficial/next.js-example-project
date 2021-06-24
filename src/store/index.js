@@ -16,7 +16,8 @@ const preloadedState = {
 	},
 	user: {
 		id: null,
-		name: '',
+		username: '',
+		avatar: '',
 		isLoggedIn: false,
 		isFetching: false,
 	},
@@ -26,7 +27,7 @@ const preloadedState = {
 		browser: {
 			name: '',
 			version: null,
-		}
+		},
 	},
 };
 

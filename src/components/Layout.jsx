@@ -5,6 +5,7 @@ import { selectUser } from "store/slices/userSlice";
 import { logout } from "store/slices/authSlice";
 import { setTheme, changeTheme, setBrowser, setIsMobile, selectUtils } from "store/slices/utilsSlice";
 import Link from 'next/link';
+import Image from 'next/image';
 import Breadcrumbs from './Breadcrumbs';
 import { getBrowser } from "utils/helpers";
 import cn from 'classnames';
@@ -25,9 +26,27 @@ function Layout({ children, noHeader, noFooter}) {
         
         let { userAgent } = navigator;
 
+        let theme = localStorage.getItem('theme');
+        
+        if (!theme) {
+
+            if (window.matchMedia) {
+
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    theme = 'dark';
+                } else {
+                    theme = 'light';
+                }
+
+            } else {
+                theme = 'light';
+            }
+            
+        }
+
         batch(() => {
 
-            dispatch(setTheme(localStorage.getItem('theme')));
+            dispatch(setTheme(theme));
 
             dispatch(setIsMobile(Boolean(userAgent.match(/Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i))));
 
@@ -68,7 +87,7 @@ function Layout({ children, noHeader, noFooter}) {
                                 <span className="navbar-toggler-icon"></span>
                             </button>
                             <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                                <ul className="navbar-nav ms-auto">
+                                <ul className="navbar-nav ms-auto align-items-center">
                                     {!user.isLoggedIn && (
                                         <>
                                             <li className="nav-item">
@@ -98,29 +117,18 @@ function Layout({ children, noHeader, noFooter}) {
                                     {user.isLoggedIn && (
                                         <>
                                             <li className="nav-item">
-                                                <Link href="/users">
-                                                    <a
-                                                        className={cn("nav-link", { "active": router.asPath.startsWith('/users')})}
-                                                        {...(router.asPath === '/users' ? { 'aria-current': 'page' } : {})}
-                                                        title="This is an anchor title for SEO purposes"
-                                                    >
-                                                        Users
-                                                    </a>
-                                                </Link>
-                                            </li>
-                                            <li className="nav-item">
-                                                <Link href="/dashboard">
+                                                <Link href={`/users/${user.id}`}>
                                                     <a
                                                         className={cn("nav-link", { "active": router.asPath.startsWith('/dashboard')})}
                                                         {...(router.asPath === '/dashboard' ? { 'aria-current': 'page' } : {})}
                                                         title="This is an anchor title for SEO purposes"
                                                     >
-                                                        Dashboard
+                                                        <Image src={user.avatar} className="rounded-circle" alt="User avatar" width={50} height={50}/>
                                                     </a>
                                                 </Link>
                                             </li>
                                             <li className="nav-item">
-                                                <Link href="#">
+                                                <Link href="/logout">
                                                     <a className="nav-link" onClick={logoutUser} title="This is an anchor title for SEO purposes">
                                                          Log out
                                                     </a>
@@ -129,7 +137,7 @@ function Layout({ children, noHeader, noFooter}) {
                                         </>  
                                     )}
                                     <li className="nav-item">
-                                        <Link href="#">
+                                        <Link href="/theme">
                                             <a className="nav-link" onClick={toggleTheme} title="This is an anchor title for SEO purposes">
                                                 <i className="bi bi-sun-fill"></i>
                                             </a>

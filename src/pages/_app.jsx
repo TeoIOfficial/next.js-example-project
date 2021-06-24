@@ -16,7 +16,7 @@ class MyApp extends App {
 		
 		let token = isBrowser ? cookie.get('token') : cookies(ctx)?.token;
 
-		if (token) await store.dispatch(getUserById(2));
+		if (token) await store.dispatch(getUserById(token));
 		
         return {
             pageProps: {

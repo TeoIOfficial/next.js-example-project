@@ -6,7 +6,8 @@ const name = 'user';
 
 const initialState = {
 	id: null,
-	name: '',
+	username: '',
+	avatar: '',
 	isLoggedIn: false,
 	isFetching: false,
 };
@@ -18,7 +19,8 @@ export const getUserById = createAsyncThunk(`${name}/getUserById`, async (userId
 
 	return {
 		id: data?.id ?? initialState.id,
-		name: data?.first_name ?? initialState.name,
+		username: data?.first_name ?? initialState.first_name,
+		avatar: data?.avatar ?? initialState.avatar,
 	};
 });
 
@@ -38,7 +40,8 @@ export const userSlice = createSlice({
 		},
 		[getUserById.fulfilled]: (state, {payload}) => {
 			state.id = payload.id;
-			state.name = payload.name;
+			state.username = payload.username;
+			state.avatar = payload.avatar;
 			state.isLoggedIn = Boolean(payload.id);
 			state.isFetching = false;
 		},

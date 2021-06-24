@@ -4,7 +4,7 @@ module.exports = {
 	reactStrictMode: true,
 	images: {
 		disableStaticImages: true,
-		domains: ['https://reqres.in'],
+		domains: ['reqres.in'],
 	},
 	sassOptions: {
 		includePaths: [path.join(__dirname, 'src/styles')],
