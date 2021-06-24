@@ -1,9 +1,11 @@
-import App, {AppProps, AppContext } from 'next/app';
+import App, { AppProps, AppContext } from 'next/app';
+import { connect, batch } from "react-redux";
 import cookie from "js-cookie";
 import cookies from 'next-cookies';
 import { getUserById } from 'store/slices/userSlice';
+import { setTheme, setBrowser, setIsMobile } from "store/slices/utilsSlice";
 import { wrapper } from "store";
-import { isBrowser } from 'utils/helpers';
+import { isBrowser, getBrowser } from 'utils/helpers';
 import "styles/globals.scss";
 
 class MyApp extends App<AppProps> {
@@ -25,6 +27,42 @@ class MyApp extends App<AppProps> {
         };
 
 	});
+
+	componentDidMount() {
+		
+		let { dispatch } = this.props;
+
+		let { userAgent } = navigator;
+
+        let theme = cookie.get('theme');
+        
+        if (!theme) {
+
+            if (window.matchMedia) {
+
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    theme = 'dark';
+                } else {
+                    theme = 'light';
+                }
+
+            } else {
+                theme = 'light';
+            }
+            
+        }
+
+        batch(() => {
+
+            dispatch(setTheme(theme));
+
+            dispatch(setIsMobile(Boolean(userAgent.match(/Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i))));
+
+            dispatch(setBrowser(getBrowser(userAgent)));
+
+		});
+		
+	}
 	
 	render() {
 
@@ -34,4 +72,4 @@ class MyApp extends App<AppProps> {
 	}
 }
 
-export default wrapper.withRedux(MyApp);
+export default wrapper.withRedux(connect()(MyApp));

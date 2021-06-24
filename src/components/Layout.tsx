@@ -1,15 +1,12 @@
-import { useEffect } from "react";
-import { useSelector, useDispatch, batch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from 'next/router';
 import { selectUser } from "store/slices/userSlice";
 import { logout } from "store/slices/authSlice";
-import { setTheme, changeTheme, setBrowser, setIsMobile, selectUtils } from "store/slices/utilsSlice";
+import { changeTheme, selectUtils } from "store/slices/utilsSlice";
 import Link from 'next/link';
 import Image from 'next/image';
 import Breadcrumbs from './Breadcrumbs';
-import { getBrowser } from "utils/helpers";
 import cn from 'classnames';
-import cookie from 'js-cookie';
 import routes from "utils/routes";
 
 // TODO: fixbootstrap navbar nav collapse
@@ -23,40 +20,6 @@ function Layout({ children, noHeader, noFooter, noBreadcrumb}) {
     const utils = useSelector(selectUtils);
 
     const dispatch = useDispatch();
-    
-    useEffect(() => {   
-        
-        let { userAgent } = navigator;
-
-        let theme = cookie.get('theme');
-        
-        if (!theme) {
-
-            if (window.matchMedia) {
-
-                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    theme = 'dark';
-                } else {
-                    theme = 'light';
-                }
-
-            } else {
-                theme = 'light';
-            }
-            
-        }
-
-        batch(() => {
-
-            dispatch(setTheme(theme));
-
-            dispatch(setIsMobile(Boolean(userAgent.match(/Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i))));
-
-            dispatch(setBrowser(getBrowser(userAgent)));
-
-        });
-
-    }, [dispatch]);
 
     const logoutUser = e => {
 
