@@ -14,8 +14,6 @@ export default class MyDocument extends Document {
     return (
       <Html lang="en" dir="ltr">
           <Head>
-          <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=1.0"
-          />
           <meta httpEquiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
           <meta name="description" content="Next.js, redux and bootstrap boilerplate" />
@@ -42,6 +40,9 @@ export default class MyDocument extends Document {
           <link rel="alternate" hrefLang="x-default" href="yourwebsite.com" />
 
           {/* <base href="https://example.com/" /> */}
+          <link rel="preconnect" href="https://fonts.googleapis.com"/>
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true"/>
+          <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet"/>
           </Head>
         <body>
           {/* add class notranslate to body if you don't want google to translate your website */}

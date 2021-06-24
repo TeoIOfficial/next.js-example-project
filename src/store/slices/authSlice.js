@@ -1,74 +1,68 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { HYDRATE } from "next-redux-wrapper";
-import cookie from "js-cookie";
-import axios from "axios";
-import Router from "next/router";
+import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
+import {HYDRATE} from 'next-redux-wrapper';
+import cookie from 'js-cookie';
+import axios from 'axios';
+import Router from 'next/router';
 
-const name = "auth";
+const name = 'auth';
 
 const initialState = {
 	isLoggingIn: false,
-	loginError: "",
+	loginError: '',
 	isLoggingOut: false,
-	logoutError: "",
+	logoutError: '',
 	isRegistering: false,
-	registerError: "",
+	registerError: '',
 };
 
-export const login = createAsyncThunk(
-	`${name}/login`,
-	async (user = {}, { rejectWithValue }) => {
-		try {
-			const res = await axios.post("https://reqres.in/api/login", user);
+export const login = createAsyncThunk(`${name}/login`, async (user = {}, {rejectWithValue}) => {
+	try {
+		const res = await axios.post('https://reqres.in/api/login', user);
 
-			let token = res?.data?.token;
+		let token = res?.data?.token;
 
-			if (token) {
-				cookie.set("token", token, {
-					expires: 1,
-					path: "/",
-				});
+		if (token) {
+			cookie.set('token', token, {
+				expires: 1,
+				path: '/',
+			});
 
-				Router.replace("/");
-			}
-		} catch (e) {
-			let errorMessage = e?.response?.data?.error ?? "An error occurred.";
-
-			return rejectWithValue(errorMessage);
+			Router.replace('/');
 		}
-	},
-);
+	} catch (e) {
+		let errorMessage = e?.response?.data?.error ?? 'An error occurred.';
 
-export const register = createAsyncThunk(
-	`${name}/register`,
-	async (user = {}, { rejectWithValue }) => {
-		try {
-			const res = await axios.post("https://reqres.in/api/register", user);
+		return rejectWithValue(errorMessage);
+	}
+});
 
-			let token = res?.data?.token;
+export const register = createAsyncThunk(`${name}/register`, async (user = {}, {rejectWithValue}) => {
+	try {
+		const res = await axios.post('https://reqres.in/api/register', user);
 
-			if (token) {
-				cookie.set("token", token, {
-					expires: 1,
-					path: "/",
-				});
+		let token = res?.data?.token;
 
-				Router.replace("/");
-			}
-		} catch (e) {
-			let errorMessage = e?.response?.data?.error ?? "An error occurred.";
+		if (token) {
+			cookie.set('token', token, {
+				expires: 1,
+				path: '/',
+			});
 
-			return rejectWithValue(errorMessage);
+			Router.replace('/');
 		}
-	},
-);
+	} catch (e) {
+		let errorMessage = e?.response?.data?.error ?? 'An error occurred.';
+
+		return rejectWithValue(errorMessage);
+	}
+});
 
 export const logout = createAsyncThunk(`${name}/logout`, () => {
-	cookie.remove("token", {
+	cookie.remove('token', {
 		expires: 1,
 	});
 
-	Router.replace("/login");
+	Router.replace('/login');
 });
 
 export const authSlice = createSlice({
@@ -76,47 +70,47 @@ export const authSlice = createSlice({
 	initialState,
 	reducers: {},
 	extraReducers: {
-		[HYDRATE]: (state, { payload }) => {
+		[HYDRATE]: (state, {payload}) => {
 			return {
 				...state,
 				...payload[name],
 			};
 		},
-		[login.pending]: (state) => {
-			state.loginError = "";
+		[login.pending]: state => {
+			state.loginError = '';
 			state.isLoggingIn = true;
 		},
-		[login.fulfilled]: (state) => {
+		[login.fulfilled]: state => {
 			state.isLoggingIn = false;
 		},
-		[login.rejected]: (state, { payload }) => {
+		[login.rejected]: (state, {payload}) => {
 			state.isLoggingIn = false;
 			state.loginError = payload;
 		},
-		[register.pending]: (state) => {
-			state.registerError = "";
+		[register.pending]: state => {
+			state.registerError = '';
 			state.isRegistering = true;
 		},
-		[register.fulfilled]: (state) => {
+		[register.fulfilled]: state => {
 			state.isRegistering = false;
 		},
-		[register.rejected]: (state, { payload }) => {
+		[register.rejected]: (state, {payload}) => {
 			state.isRegistering = false;
 			state.registerError = payload;
 		},
-		[logout.pending]: (state) => {
-			state.logoutError = "";
+		[logout.pending]: state => {
+			state.logoutError = '';
 			state.isLoggingOut = true;
 		},
-		[logout.fulfilled]: (state) => {
+		[logout.fulfilled]: state => {
 			state.isLoggingOut = false;
 		},
-		[logout.rejected]: (state) => {
+		[logout.rejected]: state => {
 			state.logoutError = "Oops! We couldn't log you out.";
 		},
 	},
 });
 
-export const selectAuth = (state) => state[name];
+export const selectAuth = state => state[name];
 
 export default authSlice.reducer;
