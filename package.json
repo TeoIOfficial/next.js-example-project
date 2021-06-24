@@ -25,6 +25,7 @@
     "js-cookie": "2.2.1",
     "next": "11.0.0",
     "next-cookies": "2.0.3",
+    "next-i18next": "^8.5.1",
     "next-redux-wrapper": "7.0.2",
     "react": "17.0.2",
     "react-bootstrap": "2.0.0-beta.2",

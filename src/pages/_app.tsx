@@ -6,6 +6,7 @@ import { getUserById } from 'store/slices/userSlice';
 import { setTheme, setBrowser, setIsMobile } from "store/slices/utilsSlice";
 import { wrapper } from "store";
 import { isBrowser, getBrowser } from 'utils/helpers';
+import { appWithTranslation } from 'next-i18next';
 import "styles/globals.scss";
 
 class MyApp extends App<AppProps> {
@@ -72,4 +73,4 @@ class MyApp extends App<AppProps> {
 	}
 }
 
-export default wrapper.withRedux(connect()(MyApp));
+export default wrapper.withRedux(connect()(appWithTranslation(MyApp)));

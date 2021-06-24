@@ -1,4 +1,5 @@
 const path = require('path');
+const {i18n} = require('./next-i18next.config');
 
 module.exports = {
 	webpack: (config, {buildId, dev, isServer, defaultLoaders, webpack}) => {
@@ -50,10 +51,7 @@ module.exports = {
 			},
 		];
 	},
-	i18n: {
-		locales: ['en', 'bg'],
-		defaultLocale: 'en',
-	},
+	i18n,
 	reactStrictMode: true,
 	images: {
 		disableStaticImages: true,

@@ -1,0 +1,6 @@
+{
+    "greeting": "Greetings, {{name}}",
+    "subtitle": "This is meant to be a big enterprise project, but for now its just a boilerplate",
+    "info_message": "Here's some information we've gathered about you",
+    "info": ""
+}
