@@ -3,7 +3,7 @@
   "description": "Boilerplate project using react.js, next.js, redux.js and bootstrap",
   "version": "0.1.0",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "browserslist": [
     ">0.3%",
     "not ie 11",

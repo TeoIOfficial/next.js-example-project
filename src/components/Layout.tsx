@@ -8,13 +8,14 @@ import Image from 'next/image';
 import Breadcrumbs from './Breadcrumbs';
 import cn from 'classnames';
 import routes from "utils/routes";
+import cookie from "js-cookie";
 
 // TODO: fixbootstrap navbar nav collapse
 
 function Layout({ children, noHeader, noFooter, noBreadcrumb}) {
 
     const router = useRouter();
-    
+
     const user = useSelector(selectUser);
 
     const utils = useSelector(selectUtils);
@@ -34,6 +35,21 @@ function Layout({ children, noHeader, noFooter, noBreadcrumb}) {
         e.preventDefault();
 
         dispatch(changeTheme());
+
+    };
+
+    const toggleLocale = e => {
+
+        e.preventDefault();
+
+        const locale = router.locale === 'en' ? 'bg' : 'en';
+
+        cookie.set('NEXT_LOCALE', locale, {
+				expires: 1,
+				path: '/',
+			});
+
+        router.replace(router.asPath, null, {locale})
 
     };
 
@@ -101,6 +117,13 @@ function Layout({ children, noHeader, noFooter, noBreadcrumb}) {
                                             </li>
                                         </>  
                                     )}
+                                    <li className="nav-item">
+                                        <Link href={router.asPath}>
+                                            <a className="nav-link" title="This is an anchor title for SEO purposes" onClick={toggleLocale}>
+                                                {(router.locale === 'en' ? 'bg' : 'en').toUpperCase()}
+                                            </a>
+                                        </Link>
+                                    </li>
                                     <li className="nav-item">
                                         <Link href={routes.theme}>
                                             <a className="nav-link" onClick={toggleTheme} title="This is an anchor title for SEO purposes">
