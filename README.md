@@ -1,1 +1,1 @@
-Next.js boilerplate
+Next.js example project
