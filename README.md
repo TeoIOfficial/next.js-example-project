@@ -1,1 +1,1 @@
-Nexst.js, Redux, Bootstrap, Typescript and SEO boilerplate
+Next.js boilerplate
