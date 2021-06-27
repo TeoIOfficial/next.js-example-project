@@ -55,6 +55,45 @@ module.exports = {
 		];
 	},
 	i18n,
+	async rewrites() {
+		return [
+			{
+				source: `/bg/${encodeURIComponent('влез')}`,
+				destination: '/login',
+				locale: false,
+			},
+			{
+				source: `/bg/${encodeURIComponent('регистрация')}`,
+				destination: '/register',
+				locale: false,
+			},
+			{
+				source: `/bg/${encodeURIComponent('излез')}`,
+				destination: '/logout',
+				locale: false,
+			},
+			{
+				source: `/bg/${encodeURIComponent('тема')}`,
+				destination: '/theme',
+				locale: false,
+			},
+			{
+				source: `/bg/${encodeURIComponent('потребители')}`,
+				destination: '/users',
+				locale: false,
+			},
+			{
+				source: `/bg/${encodeURIComponent('потребители/:userId')}`,
+				destination: '/users?userId=:userId',
+				locale: false,
+			},
+			{
+				source: `/bg/${encodeURIComponent('назад')}`,
+				destination: '/go-back',
+				locale: false,
+			},
+		];
+	},
 	reactStrictMode: true,
 	images: {
 		domains: [],

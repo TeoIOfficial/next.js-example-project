@@ -72,7 +72,7 @@ export const setAuthUser = createAsyncThunk(`${name}/setAuthUser`, async (id: nu
 
 			resolve({
 				id,
-				username: 'User',
+				username: 'common:user',
 				avatar: '/images/user-avatar-default.jpg',
 			})
 
@@ -133,7 +133,7 @@ export const login = createAsyncThunk(`${name}/login`, async (data: UserData, { 
 				path: '/',
 			});
 
-			Router.replace(routes.home);
+			Router.replace(routes.home[Router.locale]);
 
 			return null;
 
@@ -209,7 +209,7 @@ export const register = createAsyncThunk(`${name}/register`, async (data: UserDa
 				path: '/',
 			});
 
-			Router.replace(routes.home);
+			Router.replace(routes.home[Router.locale]);
 
 			return null;
 
@@ -245,7 +245,7 @@ export const logout = createAsyncThunk(`${name}/logout`, async () => {
 			expires: 1,
 		});	
 
-		Router.replace(routes.login);
+		Router.replace(routes.login[Router.locale]);
 		
 	}
 

@@ -16,7 +16,7 @@ export const getServerSideProps = wrapper.getServerSideProps(store => ctx => app
     if (store.getState().auth.user.isLoggedIn) {
         return {
             redirect: {
-                destination: routes.home,
+                destination: routes.home[ctx.locale],
                 permanent: false,
             }
         }

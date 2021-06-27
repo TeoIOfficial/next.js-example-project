@@ -8,20 +8,21 @@ import Breadcrumbs from './Breadcrumbs';
 import cn from 'classnames';
 import routes from "utils/routes";
 import cookie from "js-cookie";
-import { ReactChildren, SyntheticEvent, FC, ReactElement } from "react";
+import { ReactNode, SyntheticEvent, ReactElement } from "react";
 import { useTranslation } from "next-i18next";
 import locales from "utils/locales";
+import themes from "utils/themes";
 
 // TODO: fixbootstrap navbar nav collapse
 
 type LayoutProps = {
-    children: ReactChildren,
+    children: ReactNode,
     noHeader: boolean,
     noFooter: boolean,
     noBreadcrumb: boolean
 };
 
-const Layout: FC = ({ children, noHeader, noFooter, noBreadcrumb }: LayoutProps): ReactElement => {
+const Layout = ({ children, noHeader, noFooter, noBreadcrumb }: LayoutProps): ReactElement => {
 
     const { t } = useTranslation(['common']);
 
@@ -62,7 +63,7 @@ const Layout: FC = ({ children, noHeader, noFooter, noBreadcrumb }: LayoutProps)
             path: '/',
         });
 
-        router.replace(router.asPath, null, { locale: newLocale });
+        router.replace(router.route, null, { locale: newLocale });
 
     };
 
@@ -72,8 +73,8 @@ const Layout: FC = ({ children, noHeader, noFooter, noBreadcrumb }: LayoutProps)
                 <header>
                     <nav className={`shadow navbar navbar-expand-lg navbar-${utils.theme} bg-${utils.theme}`}>
                         <div className="container-fluid">
-                            <Link href={routes.home}>
-                                <a className="navbar-brand" title={t('common:href_title_placeholder')} {...(router.asPath === routes.home ? { 'aria-current': 'page' } : {})}>
+                            <Link href={routes.home[router.locale]}>
+                                <a className="navbar-brand" title={t('common:href_title_placeholder')} {...(router.route === routes.home.en ? { 'aria-current': 'page' } : {})}>
                                     <h1 className="h4">{t('common:project_name')}</h1>
                                 </a>
                             </Link>
@@ -85,10 +86,10 @@ const Layout: FC = ({ children, noHeader, noFooter, noBreadcrumb }: LayoutProps)
                                     {!auth.user.isLoggedIn && (
                                         <>
                                             <li className="nav-item">
-                                                <Link href={routes.login}>
+                                                <Link href={routes.login[router.locale]}>
                                                     <a
-                                                        className={cn("nav-link", { "active": router.asPath === routes.login })}
-                                                        {...(router.asPath === routes.login ? { 'aria-current': 'page' } : {})}
+                                                        className={cn("nav-link", { "active": router.route === routes.login.en })}
+                                                        {...(router.route === routes.login.en ? { 'aria-current': 'page' } : {})}
                                                         title={t('common:href_title_placeholder')}
                                                     >
                                                         {t('common:log_in')}
@@ -96,10 +97,10 @@ const Layout: FC = ({ children, noHeader, noFooter, noBreadcrumb }: LayoutProps)
                                                 </Link>
                                             </li>
                                             <li className="nav-item">
-                                                <Link href={routes.register}>
+                                                <Link href={routes.register[router.locale]}>
                                                     <a
-                                                        className={cn("nav-link", { "active": router.asPath === routes.register })}
-                                                        {...(router.asPath === routes.register ? { 'aria-current': 'page' } : {})}
+                                                        className={cn("nav-link", { "active": router.route === routes.register.en })}
+                                                        {...(router.route === routes.register.en ? { 'aria-current': 'page' } : {})}
                                                         title={t('common:href_title_placeholder')}
                                                     >
                                                         {t('common:register')}
@@ -111,10 +112,10 @@ const Layout: FC = ({ children, noHeader, noFooter, noBreadcrumb }: LayoutProps)
                                     {auth.user.isLoggedIn && (
                                         <>
                                             <li className="nav-item">
-                                                <Link href={routes.user_profile(auth.user.id)}>
+                                                <Link href={routes.user_profile(auth.user.id)[router.locale]}>
                                                     <a
                                                         className="nav-link d-flex align-items-center"
-                                                        {...(router.asPath === routes.user_profile(auth.user.id) ? { 'aria-current': 'page' } : {})}
+                                                        {...(router.route === routes.user_profile(auth.user.id).en ? { 'aria-current': 'page' } : {})}
                                                         title={t('common:href_title_placeholder')}
                                                     >
                                                         <Image src={auth.user.avatar} className="rounded-circle" alt={t('common:user_avatar')} width={45} height={45} />
@@ -123,7 +124,7 @@ const Layout: FC = ({ children, noHeader, noFooter, noBreadcrumb }: LayoutProps)
                                             </li>
                                             <li className="nav-item">
                                                 {!auth.isLoggingOut ?
-                                                    <Link href={routes.logout}>
+                                                    <Link href={routes.logout[router.locale]}>
                                                         <a className="nav-link" onClick={logoutUser} title={t('common:href_title_placeholder')}>
                                                             {t('common:log_out')}
                                                         </a>
@@ -137,7 +138,7 @@ const Layout: FC = ({ children, noHeader, noFooter, noBreadcrumb }: LayoutProps)
                                         </>
                                     )}
                                     <li className="nav-item">
-                                        <Link href={router.asPath}>
+                                        <Link href={router.route}>
                                             <a className="nav-link" title={t('common:href_title_placeholder')} onClick={toggleLocale}>
                                                 {(router.locale === locales.en.locale ? locales.bg.text : locales.en.text)}
                                             </a>
@@ -145,7 +146,7 @@ const Layout: FC = ({ children, noHeader, noFooter, noBreadcrumb }: LayoutProps)
                                     </li>
                                     <li className="nav-item">
                                         {!utils.isSettingTheme ?
-                                            <Link href={routes.theme}>
+                                            <Link href={routes.theme[router.locale]}>
                                                 <a className="nav-link" onClick={toggleTheme} title={t('common:href_title_placeholder')}>
                                                     <i className="bi bi-sun-fill" />
                                                 </a>
@@ -169,15 +170,15 @@ const Layout: FC = ({ children, noHeader, noFooter, noBreadcrumb }: LayoutProps)
                 </div>
             </main>
             {!noFooter && (
-                <footer className="border-top">
+                <footer className={`border-top bg-${utils.theme}`}>
                     <nav className={`navbar navbar-${utils.theme} bg-${utils.theme}`}>
                         <div className="container-fluid">
                             <ul className="navbar-nav mx-auto">
                                 <li className="nav-item">
-                                    <Link href={routes.home}>
+                                    <Link href={routes.home[router.locale]}>
                                         <a
-                                            className={cn("nav-link", { "active": router.asPath === routes.home })}
-                                            {...(router.asPath === routes.home ? { 'aria-current': 'page' } : {})}
+                                            className={cn("nav-link", { "active": router.route === routes.home.en })}
+                                            {...(router.route === routes.home.en ? { 'aria-current': 'page' } : {})}
                                             title={t('common:href_title_placeholder')}
                                         >
                                             {t('common:logo')}
@@ -187,7 +188,7 @@ const Layout: FC = ({ children, noHeader, noFooter, noBreadcrumb }: LayoutProps)
                             </ul>
                         </div>
                     </nav>
-                    <p className="text-center">
+                    <p className={cn("text-center", { 'text-light': utils.theme === themes.dark })}>
                         <b>&copy; Copyright 2021 {process.env.CREATOR}</b>
                     </p>
                 </footer>

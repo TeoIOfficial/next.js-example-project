@@ -12,6 +12,7 @@ import { ReactElement } from "react";
 import { wrapper } from 'store';
 import { appGetServerSideProps } from "utils/app";
 import Clock from 'components/Clock';
+import { useRouter } from "next/router";
 
 export const getServerSideProps = wrapper.getServerSideProps(store => ctx => appGetServerSideProps(store, ctx, async () => {
 
@@ -24,6 +25,8 @@ export const getServerSideProps = wrapper.getServerSideProps(store => ctx => app
 }));
 
 const Home: NextPage = (): ReactElement => {
+
+	const router = useRouter();
 
 	const utils = useSelector(selectUtils);
 
@@ -38,7 +41,7 @@ const Home: NextPage = (): ReactElement => {
 				<meta name="description" content={t('home:meta_description')} />
 			</Head>
 			<section className="d-flex flex-column align-items-center text-center m-5">
-				<h2 className="text-success">{t('home:greeting', { name: auth.user.username || t('common:friend') })}!</h2>
+				<h2 className="text-success">{t('home:greeting', { name: t(auth.user.username) || t('common:friend') })}!</h2>
 				<div className="shadow-lg p-5 my-5 rounded-3 bg-light">
 					<p className="h3">{t('home:info_message')}:</p>
 					<p className="h3 mt-5">{t('home:currently_using')} <b className="text-danger">{utils.browser.name} / {utils.browser.version}</b> {t('home:browser_on')} <b className="text-danger">{utils.isMobile ? t('common:mobile_device') : t('common:desktop_device')}</b>.</p>
@@ -48,13 +51,13 @@ const Home: NextPage = (): ReactElement => {
 				</div>
 				{!auth.user.isLoggedIn && (
 					<div className="shadow-lg p-5 mt-5 rounded-3 d-flex flex-column align-items-center bg-light">
-						<Link href={routes.login}>
+						<Link href={routes.login[router.locale]}>
 							<a className="btn btn-primary btn-lg" title="This is an anchor title for SEO purposes">
 								{t('common:log_in')}
 							</a>
 						</Link>
 						<span className="my-2">{t('common:or')}</span>
-						<Link href={routes.register}>
+						<Link href={routes.register[router.locale]}>
 							<a className="btn btn-primary btn-lg" title="This is an anchor title for SEO purposes">
 								{t('common:register_new')}
 							</a>

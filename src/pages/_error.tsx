@@ -68,7 +68,7 @@ const Error: NextPage<ErrorProps> = ({ statusCode }) => {
         <p className="display-1 text-center text-danger">{statusCode}</p>
         <div className="shadow-lg p-5 mt-5 rounded-3 d-flex flex-column align-items-center bg-light">
           <p className="display-4 text-center text-danger">{setErrorMessage(statusCode)}!</p>
-          <Link href={routes.goBack}>
+          <Link href={routes.goBack[router.locale]}>
             <a className="btn btn-success btn-lg mt-5" title="This is an anchor title for SEO purposes" onClick={handleGoBack}>
               {t('common:go_back')}
             </a>

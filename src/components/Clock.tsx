@@ -15,21 +15,24 @@ const Clock = ({ className }: ClockProps): ReactElement => {
 
         timeInterval = setInterval(() => {
 
-            setTime(moment().format('h:mm:ss A'));
+            setTime(moment().format('HH:mm:ss'));
 
         }, 1000);
 
         return () => {
 
-            timeInterval = null;
+            clearInterval(timeInterval);
+
         }
 
     }, []);
 
     return (
-        <time className={className}>
-            {time}
-        </time>
+        <b>
+            <time className={className}>
+                {time}
+            </time>
+        </b>
     )
 }
 

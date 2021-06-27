@@ -30,5 +30,7 @@
     "error_500": "Oops, an error occurred on the server",
     "unknown_error": "Oops, an unknown error occurred",
     "go_back": "Go back",
-    "error": "Error"
+    "error": "Error",
+    "user": "User",
+    "home": "Home"
 }   

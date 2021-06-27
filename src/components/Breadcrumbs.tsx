@@ -16,7 +16,7 @@ type Breadcrumb = {
 
 const Breadcrumbs: FC = (): ReactElement => {
 
-    const {t} = useTranslation(['common']);
+    const { t } = useTranslation(['common']);
 
     const router = useRouter();
 
@@ -25,25 +25,25 @@ const Breadcrumbs: FC = (): ReactElement => {
     const [breadcrumbs, setBreadcrumbs] = useState([]);
 
     useEffect(() => {
-        
-        if (router.asPath === routes.home) {
 
-            setBreadcrumbs([{ segment: 'Home', href: routes.home }]);
+        if (router.route === routes.home[router.locale]) {
+
+            setBreadcrumbs([{ segment: t('common:home'), href: routes.home[router.locale] }]);
 
             return;
 
         }
 
         const linkPath = router.asPath.split('/');
-            
-        const pathArray = linkPath.map((path, i) => ({    
-            segment: path || 'Home',
-            href: path ? linkPath.slice(0, i + 1).join('/') : routes.home           
+
+        const pathArray = linkPath.map((path, i) => ({
+            segment: path || t('common:home'),
+            href: path ? linkPath.slice(0, i + 1).join('/') : routes.home[router.locale]
         }));
-        
+
         setBreadcrumbs(pathArray);
 
-    }, [router]);
+    }, [router, t]);
 
     return (
         <nav className={`border-bottom py-3 bg-${utils.theme}`} aria-label="breadcrumb">
@@ -61,9 +61,9 @@ const Breadcrumbs: FC = (): ReactElement => {
                                         }
                                     )}
                                     title={t('common:href_title_placeholder')}
-                                    {...(breadcrumb.href === router.asPath ? { 'aria-current': 'page' } : {})}
+                                    {...(breadcrumb.href === router.route ? { 'aria-current': 'page' } : {})}
                                 >
-                                    {breadcrumb.segment}
+                                    {decodeURIComponent(breadcrumb.segment)}
                                 </a>
                             </Link>
                         </li>
