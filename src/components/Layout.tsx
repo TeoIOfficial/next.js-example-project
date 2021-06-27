@@ -1,28 +1,39 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from 'next/router';
-import { selectUser } from "store/slices/userSlice";
-import { logout } from "store/slices/authSlice";
-import { changeTheme, selectUtils } from "store/slices/utilsSlice";
+import { logout, selectAuth } from "store/slices/authSlice";
+import { setTheme, selectUtils } from "store/slices/utilsSlice";
 import Link from 'next/link';
 import Image from 'next/image';
 import Breadcrumbs from './Breadcrumbs';
 import cn from 'classnames';
 import routes from "utils/routes";
 import cookie from "js-cookie";
+import { ReactChildren, SyntheticEvent, FC, ReactElement } from "react";
+import { useTranslation } from "next-i18next";
+import locales from "utils/locales";
 
 // TODO: fixbootstrap navbar nav collapse
 
-function Layout({ children, noHeader, noFooter, noBreadcrumb}) {
+type LayoutProps = {
+    children: ReactChildren,
+    noHeader: boolean,
+    noFooter: boolean,
+    noBreadcrumb: boolean
+};
 
-    const router = useRouter();
+const Layout: FC = ({ children, noHeader, noFooter, noBreadcrumb }: LayoutProps): ReactElement => {
 
-    const user = useSelector(selectUser);
-
-    const utils = useSelector(selectUtils);
+    const { t } = useTranslation(['common']);
 
     const dispatch = useDispatch();
 
-    const logoutUser = e => {
+    const router = useRouter();
+
+    const auth = useSelector(selectAuth);
+
+    const utils = useSelector(selectUtils);
+
+    const logoutUser = (e: SyntheticEvent): void => {
 
         e.preventDefault();
 
@@ -30,26 +41,28 @@ function Layout({ children, noHeader, noFooter, noBreadcrumb}) {
 
     };
 
-    const toggleTheme = e => {
+    const toggleTheme = (e: SyntheticEvent): void => {
 
         e.preventDefault();
 
-        dispatch(changeTheme());
+        if (utils.isSettingTheme) return;
+
+        dispatch(setTheme(null));
 
     };
 
-    const toggleLocale = e => {
+    const toggleLocale = (e: SyntheticEvent): void => {
 
         e.preventDefault();
 
-        const locale = router.locale === 'en' ? 'bg' : 'en';
+        const newLocale = router.locale === locales.en.locale ? locales.bg.locale : locales.en.locale;
 
-        cookie.set('NEXT_LOCALE', locale, {
-				expires: 1,
-				path: '/',
-			});
+        cookie.set('NEXT_LOCALE', newLocale, {
+            expires: 1,
+            path: '/',
+        });
 
-        router.replace(router.asPath, null, {locale})
+        router.replace(router.asPath, null, { locale: newLocale });
 
     };
 
@@ -60,8 +73,8 @@ function Layout({ children, noHeader, noFooter, noBreadcrumb}) {
                     <nav className={`shadow navbar navbar-expand-lg navbar-${utils.theme} bg-${utils.theme}`}>
                         <div className="container-fluid">
                             <Link href={routes.home}>
-                                <a className="navbar-brand" title="This is an anchor title for SEO purposes" {...(router.asPath === routes.home ? { 'aria-current': 'page' } : {})}>                           
-                                    <h1 className="h4">Next.js, redux and bootstrap boilerplate</h1>                       
+                                <a className="navbar-brand" title={t('common:href_title_placeholder')} {...(router.asPath === routes.home ? { 'aria-current': 'page' } : {})}>
+                                    <h1 className="h4">{t('common:project_name')}</h1>
                                 </a>
                             </Link>
                             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,67 +82,79 @@ function Layout({ children, noHeader, noFooter, noBreadcrumb}) {
                             </button>
                             <div className="collapse navbar-collapse" id="navbarSupportedContent">
                                 <ul className="navbar-nav ms-auto align-items-center">
-                                    {!user.isLoggedIn && (
+                                    {!auth.user.isLoggedIn && (
                                         <>
                                             <li className="nav-item">
                                                 <Link href={routes.login}>
                                                     <a
-                                                        className={cn("nav-link", { "active": router.asPath === routes.login})}
+                                                        className={cn("nav-link", { "active": router.asPath === routes.login })}
                                                         {...(router.asPath === routes.login ? { 'aria-current': 'page' } : {})}
-                                                        title="This is an anchor title for SEO purposes"
+                                                        title={t('common:href_title_placeholder')}
                                                     >
-                                                        Log in
+                                                        {t('common:log_in')}
                                                     </a>
                                                 </Link>
                                             </li>
                                             <li className="nav-item">
                                                 <Link href={routes.register}>
                                                     <a
-                                                        className={cn("nav-link", { "active": router.asPath === routes.register})}
+                                                        className={cn("nav-link", { "active": router.asPath === routes.register })}
                                                         {...(router.asPath === routes.register ? { 'aria-current': 'page' } : {})}
-                                                        title="This is an anchor title for SEO purposes"
+                                                        title={t('common:href_title_placeholder')}
                                                     >
-                                                        Register
+                                                        {t('common:register')}
                                                     </a>
                                                 </Link>
                                             </li>
                                         </>
                                     )}
-                                    {user.isLoggedIn && (
+                                    {auth.user.isLoggedIn && (
                                         <>
                                             <li className="nav-item">
-                                                <Link href={routes.user_profile(user.id)}>
+                                                <Link href={routes.user_profile(auth.user.id)}>
                                                     <a
-                                                        className="nav-link"
-                                                        {...(router.asPath === routes.user_profile(user.id) ? { 'aria-current': 'page' } : {})}
-                                                        title="This is an anchor title for SEO purposes"
+                                                        className="nav-link d-flex align-items-center"
+                                                        {...(router.asPath === routes.user_profile(auth.user.id) ? { 'aria-current': 'page' } : {})}
+                                                        title={t('common:href_title_placeholder')}
                                                     >
-                                                        <Image src={user.avatar} className="rounded-circle" alt="User avatar" width={50} height={50}/>
+                                                        <Image src={auth.user.avatar} className="rounded-circle" alt={t('common:user_avatar')} width={45} height={45} />
                                                     </a>
                                                 </Link>
                                             </li>
                                             <li className="nav-item">
-                                                <Link href={routes.logout}>
-                                                    <a className="nav-link" onClick={logoutUser} title="This is an anchor title for SEO purposes">
-                                                         Log out
-                                                    </a>
-                                                </Link>
+                                                {!auth.isLoggingOut ?
+                                                    <Link href={routes.logout}>
+                                                        <a className="nav-link" onClick={logoutUser} title={t('common:href_title_placeholder')}>
+                                                            {t('common:log_out')}
+                                                        </a>
+                                                    </Link>
+                                                    :
+                                                    <div className="nav-link">
+                                                        <span className="spinner-border nav-link-status-spinner" role="status" aria-hidden="true" />
+                                                    </div>
+                                                }
                                             </li>
-                                        </>  
+                                        </>
                                     )}
                                     <li className="nav-item">
                                         <Link href={router.asPath}>
-                                            <a className="nav-link" title="This is an anchor title for SEO purposes" onClick={toggleLocale}>
-                                                {(router.locale === 'en' ? 'bg' : 'en').toUpperCase()}
+                                            <a className="nav-link" title={t('common:href_title_placeholder')} onClick={toggleLocale}>
+                                                {(router.locale === locales.en.locale ? locales.bg.text : locales.en.text)}
                                             </a>
                                         </Link>
                                     </li>
                                     <li className="nav-item">
-                                        <Link href={routes.theme}>
-                                            <a className="nav-link" onClick={toggleTheme} title="This is an anchor title for SEO purposes">
-                                                <i className="bi bi-sun-fill"></i>
-                                            </a>
-                                        </Link>
+                                        {!utils.isSettingTheme ?
+                                            <Link href={routes.theme}>
+                                                <a className="nav-link" onClick={toggleTheme} title={t('common:href_title_placeholder')}>
+                                                    <i className="bi bi-sun-fill" />
+                                                </a>
+                                            </Link>
+                                            :
+                                            <div className="nav-link">
+                                                <span className="spinner-border nav-link-status-spinner" role="status" aria-hidden="true" />
+                                            </div>
+                                        }
                                     </li>
                                 </ul>
                             </div>
@@ -151,20 +176,31 @@ function Layout({ children, noHeader, noFooter, noBreadcrumb}) {
                                 <li className="nav-item">
                                     <Link href={routes.home}>
                                         <a
-                                            className={cn("nav-link", { "active": router.asPath === routes.home})}
+                                            className={cn("nav-link", { "active": router.asPath === routes.home })}
                                             {...(router.asPath === routes.home ? { 'aria-current': 'page' } : {})}
-                                            title="This is an anchor title for SEO purposes"
+                                            title={t('common:href_title_placeholder')}
                                         >
-                                            Logo
+                                            {t('common:logo')}
                                         </a>
-                                    </Link> 
+                                    </Link>
                                 </li>
-                             </ul>
+                            </ul>
                         </div>
                     </nav>
+                    <p className="text-center">
+                        <b>&copy; Copyright 2021 {process.env.CREATOR}</b>
+                    </p>
                 </footer>
             )}
-        </div> 
+            <style jsx>
+                {`
+                    .nav-link-status-spinner {
+                        width: 1.25rem !important;
+                        height: 1.25rem !important;
+                    }
+                `}
+            </style>
+        </div>
     )
 }
 

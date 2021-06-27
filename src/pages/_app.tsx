@@ -1,57 +1,24 @@
-import App, { AppProps, AppContext } from 'next/app';
-import { connect, batch } from "react-redux";
+import { batch, useDispatch } from "react-redux";
 import cookie from "js-cookie";
-import cookies from 'next-cookies';
-import { getUserById } from 'store/slices/userSlice';
 import { setTheme, setBrowser, setIsMobile } from "store/slices/utilsSlice";
 import { wrapper } from "store";
-import { isBrowser, getBrowser } from 'utils/helpers';
+import { getBrowser } from 'utils/helpers';
 import { appWithTranslation } from 'next-i18next';
 import "styles/globals.scss";
+import themes from 'utils/themes';
+import { useEffect } from 'react';
+import { AppProps } from "next/app";
+import { ReactElement } from "react";
 
-class MyApp extends App<AppProps> {
+const App = ({ Component, pageProps }: AppProps): ReactElement => {
 
-	static getInitialProps = wrapper.getInitialAppProps(store => async ({Component, ctx}: AppContext ) => {	
+    let dispatch = useDispatch();
 
-		// console.log(process.env.ENV_VAR_MAIN);
-		// console.log(process.env.ENV_VAR);
-		// console.log(process.env.NEXT_PUBLIC_ENV_VAR);
-		
-		let token = isBrowser ? cookie.get('token') : cookies(ctx)?.token;
+    useEffect(() => {
 
-		if (token) await store.dispatch(getUserById(token));
-		
-        return {
-            pageProps: {
-                ...(Component.getInitialProps ? await Component.getInitialProps({...ctx, store}) : {})
-            },
-        };
+        let { userAgent } = navigator;
 
-	});
-
-	componentDidMount() {
-		
-		let { dispatch } = this.props;
-
-		let { userAgent } = navigator;
-
-        let theme = cookie.get('theme');
-        
-        if (!theme) {
-
-            if (window.matchMedia) {
-
-                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    theme = 'dark';
-                } else {
-                    theme = 'light';
-                }
-
-            } else {
-                theme = 'light';
-            }
-            
-        }
+        let theme = cookie.get('theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? themes.light : themes.dark);
 
         batch(() => {
 
@@ -61,16 +28,12 @@ class MyApp extends App<AppProps> {
 
             dispatch(setBrowser(getBrowser(userAgent)));
 
-		});
-		
-	}
-	
-	render() {
+        });
+        
+    }, [dispatch]);
 
-		const { Component, pageProps } = this.props;
-		
-		return <Component {...pageProps} />;
-	}
-}
+    return <Component {...pageProps} />
+    
+};
 
-export default wrapper.withRedux(connect()(appWithTranslation(MyApp)));
+export default wrapper.withRedux(appWithTranslation(App));

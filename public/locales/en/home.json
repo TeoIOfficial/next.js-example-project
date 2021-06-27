@@ -1,6 +1,8 @@
 {
     "greeting": "Greetings, {{name}}",
-    "subtitle": "This is meant to be a big enterprise project, but for now its just a boilerplate",
     "info_message": "Here's some information we've gathered about you",
-    "info": ""
+    "currently_using": "You're currently using a",
+    "browser_on": "browser on a",
+    "meta_description": "This is a description for the home page",
+    "current_time": "Your local time is"
 }

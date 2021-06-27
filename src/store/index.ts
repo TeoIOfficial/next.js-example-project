@@ -2,47 +2,21 @@ import {configureStore} from '@reduxjs/toolkit';
 import {createWrapper} from 'next-redux-wrapper';
 // import logger from "redux-logger";
 import authReducer from './slices/authSlice';
-import userReducer from './slices/userSlice';
 import utilsReducer from './slices/utilsSlice';
 
-const preloadedState = {
-	auth: {
-		isLoggingIn: false,
-		loginError: '',
-		isLoggingOut: false,
-		logoutError: '',
-		isRegistering: false,
-		registerError: '',
+const store = configureStore({
+	reducer: {
+		auth: authReducer,
+		utils: utilsReducer,
 	},
-	user: {
-		id: null,
-		username: '',
-		avatar: '',
-		isLoggedIn: false,
-		isFetching: false,
-	},
-	utils: {
-		theme: 'light',
-		isMobile: false,
-		browser: {
-			name: '',
-			version: null,
-		},
-	},
-};
+	// middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
+	devTools: process.env.NODE_ENV !== 'production',
+	// preloadedState: {},
+	// enhancers: [],
+});
 
-const store = () => {
-	return configureStore({
-		reducer: {
-			auth: authReducer,
-			user: userReducer,
-			utils: utilsReducer,
-		},
-		// middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
-		devTools: process.env.NODE_ENV !== 'production',
-		preloadedState,
-		// enhancers: [],
-	});
-};
+export type RootState = ReturnType<typeof store.getState>
 
-export const wrapper = createWrapper(store);
+export type AppDispatch = typeof store.dispatch
+
+export const wrapper = createWrapper(() => store);

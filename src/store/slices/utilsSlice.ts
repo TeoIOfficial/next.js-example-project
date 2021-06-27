@@ -1,70 +1,110 @@
-import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
-import {HYDRATE} from 'next-redux-wrapper';
+import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit';
 import cookie from 'js-cookie';
+import { Browser } from 'utils/helpers';
+import { RootState } from 'store';
+import themes from 'utils/themes';
 
-const name = 'utils';
+const name: string = 'utils';
 
-const initialState = {
-	theme: 'light',
+export type Theme = string;
+
+export type IsMobile = boolean;
+
+export interface UtilsState {
+	theme: Theme,
+	isSettingTheme: boolean,
+	isMobile: IsMobile,
+	browser: Browser,
+};
+
+const initialState: UtilsState = {
+	theme: themes.light,
+	isSettingTheme: false,
 	isMobile: false,
 	browser: {
 		name: '',
-		version: null,
+		version: '',
 	},
 };
 
-export const changeTheme = createAsyncThunk(`${name}/changeTheme`, async (theme, {getState}) => {
-	let currentTheme = getState().utils.theme;
+export const setTheme = createAsyncThunk<any, Theme, {state: RootState}>(`${name}/setTheme`, async (theme, { getState }) => {
+	
+	if (theme) return theme;
 
-	let newTheme = '';
+	let expensivePromise = new Promise((resolve) => {
 
-	if (theme) {
-		if (currentTheme === theme) return;
-		newTheme = theme;
-	} else {
-		if (currentTheme === 'light') newTheme = 'dark';
-		if (currentTheme === 'dark') newTheme = 'light';
-	}
+		setTimeout(() => {
 
-	cookie.set('theme', newTheme, {
-		expires: 1,
-		path: '/',
+			let currentTheme = getState().utils.theme;
+
+			let newTheme = '';
+
+			if (theme) {
+
+				if (currentTheme === theme) return;
+
+				newTheme = theme;
+
+			} else {
+
+				if (currentTheme === themes.light) newTheme = themes.dark;
+
+				if (currentTheme === themes.dark) newTheme = themes.light;
+
+			}
+
+			cookie.set('theme', newTheme, {
+				expires: 1,
+				path: '/',
+			});
+
+			resolve(newTheme);
+
+		}, 1000);
+
 	});
 
-	return newTheme;
+	let res = await expensivePromise;
+
+	return res;
+	
 });
 
 export const utilsSlice = createSlice({
 	name,
 	initialState,
 	reducers: {
-		setTheme: (state, {payload}) => {
-			if (payload && payload !== state.theme) state.theme = payload;
-		},
-		setIsMobile: (state, {payload}) => {
+		setIsMobile: (state, action: PayloadAction<IsMobile>) => {
+			
+			let { payload } = action;
+
 			state.isMobile = payload;
+
 		},
-		setBrowser: (state, {payload}) => {
+		setBrowser: (state, action: PayloadAction<Browser>) => {
+			
+			let { payload } = action;
+
 			state.browser = {
 				name: payload.name,
 				version: payload.version,
 			};
+
 		},
 	},
-	extraReducers: {
-		[HYDRATE]: state => {
-			return {
-				...state,
-			};
-		},
-		[changeTheme.fulfilled]: (state, {payload}) => {
+	extraReducers: builder => {
+		builder.addCase(setTheme.pending, (state) => {
+			state.isSettingTheme = true;
+		})
+		builder.addCase(setTheme.fulfilled, (state, { payload }) => {
 			state.theme = payload;
-		},
-	},
+			state.isSettingTheme = false;
+		})
+	}
 });
 
-export const {setTheme, setIsMobile, setBrowser} = utilsSlice.actions;
+export const {setIsMobile, setBrowser} = utilsSlice.actions;
 
-export const selectUtils = state => state[name];
+export const selectUtils = (state: RootState): UtilsState => state[name];
 
 export default utilsSlice.reducer;

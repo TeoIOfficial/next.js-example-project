@@ -2,14 +2,17 @@ const path = require('path');
 const {i18n} = require('./next-i18next.config');
 
 module.exports = {
-	webpack: (config, {buildId, dev, isServer, defaultLoaders, webpack}) => {
-		// console.log('buildId', buildId);
-		// console.log('dev', dev);
-		// console.log('isServer', isServer);
-		// console.log('defaultLoaders', defaultLoaders);
-		// console.log('webpack', webpack);
-		return config;
+	env: {
+		CREATOR: 'TeoIOfficial',
 	},
+	// webpack: (config, {buildId, dev, isServer, defaultLoaders, webpack}) => {
+	// 	// console.log('buildId', buildId);
+	// 	// console.log('dev', dev);
+	// 	// console.log('isServer', isServer);
+	// 	// console.log('defaultLoaders', defaultLoaders);
+	// 	// console.log('webpack', webpack);
+	// 	return config;
+	// },
 	async headers() {
 		return [
 			{
@@ -54,8 +57,7 @@ module.exports = {
 	i18n,
 	reactStrictMode: true,
 	images: {
-		disableStaticImages: true,
-		domains: ['reqres.in'],
+		domains: [],
 	},
 	sassOptions: {
 		includePaths: [path.join(__dirname, 'src/styles')],

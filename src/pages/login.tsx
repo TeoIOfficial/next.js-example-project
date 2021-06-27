@@ -1,15 +1,19 @@
-import { useState } from "react";
-import {NextPage} from 'next';
+import { SyntheticEvent, useState, ReactElement } from "react";
+import { NextPage } from 'next';
 import { useDispatch, useSelector } from "react-redux";
 import Head from "next/head";
 import { login, selectAuth } from "store/slices/authSlice";
 import Layout from "components/Layout";
 import { wrapper } from 'store';
 import routes from "utils/routes";
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'next-i18next';
+import cn from 'classnames';
+import { appGetServerSideProps } from "utils/app";
 
-export const getServerSideProps = wrapper.getServerSideProps(store => async () => {
+export const getServerSideProps = wrapper.getServerSideProps(store => ctx => appGetServerSideProps(store, ctx, async () => {
 
-    if (store.getState().user.isLoggedIn) {
+    if (store.getState().auth.user.isLoggedIn) {
         return {
             redirect: {
                 destination: routes.home,
@@ -17,20 +21,28 @@ export const getServerSideProps = wrapper.getServerSideProps(store => async () =
             }
         }
     }
-    
-});
 
-const Login: NextPage = () => {
+    return {
+        props: {
+            ...(await serverSideTranslations(ctx.locale, ['login', 'common'])),
+        },
+    };
+
+}));
+
+const Login: NextPage = (): ReactElement => {
+
+    const { t } = useTranslation();
 
     const auth = useSelector(selectAuth);
 
     const dispatch = useDispatch();
 
     const [email, setEmail] = useState("");
-    
+
     const [password, setPassword] = useState("");
-    
-    const handleFormSubmit = e => {
+
+    const handleFormSubmit = (e: SyntheticEvent): void => {
 
         e.preventDefault();
 
@@ -41,37 +53,56 @@ const Login: NextPage = () => {
 
     };
 
-	return (
-		<Layout>
-			<Head>
-				<title>Login</title>
+    const handleOnEmailChange = e => {
+
+        setEmail(e.target.value);
+
+    }
+
+    const handleOnPasswordChange = e => {
+
+        setPassword(e.target.value);
+
+    }
+
+    return (
+        <Layout>
+            <Head>
+                <title>{t('common:log_in')}</title>
+                <meta name="description" content={t('login:meta_description')} />
             </Head>
             <div className="container shadow p-5 bg-light rounded-3">
-                <form onSubmit={handleFormSubmit}>
+                <form onSubmit={handleFormSubmit} className="needs-validation" noValidate>
                     <div className="form-floating mb-3">
-                        <input type="email" className="form-control" id="email" aria-describedby="emailHelp" placeholder="E-mail" value={email} onChange={e => setEmail(e.target.value)} />
-                        <label htmlFor="email">E-mail</label>
-                        <div id="emailHelp" className="form-text">Enter e-mail - eve.holt@reqres.in</div>
+                        <input type="email" className={cn("form-control", { "is-invalid": auth.loginErrors.email })} id="email" placeholder={t('common:enter_email')} value={email} onChange={handleOnEmailChange} required />
+                        <label htmlFor="email">{t('common:enter_email')}</label>
+                        {auth.loginErrors.email && (
+                            <p className="form-text text-danger mt-3">
+                                {auth.loginErrors.email}
+                            </p>
+                        )}
                     </div>
                     <div className="form-floating mb-3">
-                        <input type="password" className="form-control" id="password" aria-describedby="passwordHelp" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
-                        <label htmlFor="password">Password</label>
-                        <div id="passwordHelp" className="form-text">Enter password - cityslicka</div>
+                        <input type="password" className={cn("form-control", { "is-invalid": auth.loginErrors.password })} id="password" placeholder={t('common:enter_password')} value={password} onChange={handleOnPasswordChange} required />
+                        <label htmlFor="password">{t('common:enter_password')}</label>
+                        {auth.loginErrors.password && (
+                            <p className="form-text text-danger mt-3">
+                                {auth.loginErrors.password}
+                            </p>
+                        )}
                     </div>
-                    {auth.loginError && (
-                        <div className="mb-3">
-                        <span id="passwordHelpInline" className="form-text text-danger mb-3">
-                            {auth.loginError}
-                        </span>
-                    </div>
+                    {auth.loginErrors.other && (
+                        <p className="form-text text-danger mb-3">
+                            {auth.loginErrors.other}
+                        </p>
                     )}
                     <button type="submit" className="btn btn-primary" disabled={auth.isLoggingIn}>
-                        {auth.isLoggingIn ? 'Logging in...' : 'Log in'}
+                        {auth.isLoggingIn ? `${t('common:logging_in')}...` : t('common:log_in')}
                     </button>
                 </form>
             </div>
-		</Layout>
-	);
+        </Layout>
+    );
 }
 
 export default Login;

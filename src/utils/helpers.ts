@@ -1,9 +1,15 @@
 export const isBrowser = typeof window !== 'undefined';
 
-export const getBrowser = userAgent => {
+export type Browser = {
+	name: string,
+	version: string
+}
+
+export const getBrowser = (userAgent: string): Browser => {
+
 	let browser = '';
 
-	const browserVersion = (userAgent, regex) => (userAgent.match(regex) ? userAgent.match(regex)[2] : null);
+	const browserVersion = (userAgent: string, regex: RegExp) => (userAgent.match(regex) ? userAgent.match(regex)[2] : null);
 
 	// Detect browser name
 
@@ -66,7 +72,7 @@ export const getBrowser = userAgent => {
 			// IE/8.0 = Trident/4.0, IE/9.0 = Trident/5.0
 			return {
 				name: browser,
-				version: version ? parseFloat(version) + 4.0 : '7.0',
+				version: (version ? parseFloat(version) + 4.0 : 7.0).toString(),
 			};
 		default:
 			return {
@@ -75,3 +81,5 @@ export const getBrowser = userAgent => {
 			};
 	}
 };
+
+

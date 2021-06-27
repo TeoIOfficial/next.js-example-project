@@ -1,117 +1,325 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import {HYDRATE} from 'next-redux-wrapper';
 import cookie from 'js-cookie';
-import axios from 'axios';
 import Router from 'next/router';
 import routes from 'utils/routes';
+import { RootState } from 'store';
+import { i18n } from 'next-i18next';
 
-const name = 'auth';
+const name: string = 'auth';
 
-const initialState = {
+export interface AuthState {
+	user: {
+		id: number,
+		username: string,
+		avatar: string,
+		isLoggedIn: boolean,
+		isFetching: boolean,
+	},
+	isLoggingIn: boolean,
+	loginErrors: {
+		email: string,
+		password: string,
+		other: string
+	},
+	isRegistering: boolean,
+	registerErrors: {
+		email: string,
+		password: string,
+		repeatPassword: string,
+		other: string
+	},
+	isLoggingOut: boolean,
+	logoutError: string,
+};
+
+const initialState: AuthState = {
+	user: {
+		id: null,
+		username: '',
+		avatar: '',
+		isLoggedIn: false,
+		isFetching: false,
+	},
 	isLoggingIn: false,
-	loginError: '',
+	loginErrors: {
+		email: '',
+		password: '',
+		other: ''
+	},
 	isLoggingOut: false,
 	logoutError: '',
 	isRegistering: false,
-	registerError: '',
+	registerErrors: {
+		email: '',
+		password: '',
+		repeatPassword: '',
+		other: ''
+	},
 };
 
-export const login = createAsyncThunk(`${name}/login`, async (user = {}, {rejectWithValue}) => {
-	try {
-		const res = await axios.post('https://reqres.in/api/login', user);
+export type UserData = {
+	email: string,
+	password: string,
+	repeatPassword?: string
+}
 
-		let token = res?.data?.token;
+export const setAuthUser = createAsyncThunk(`${name}/setAuthUser`, async (id: number) => {
 
-		if (token) {
-			cookie.set('token', 1, {
-				expires: 1,
-				path: '/',
-			});
+	let expensivePromise = new Promise((resolve) => {
 
-			Router.replace(routes.home);
-		}
-	} catch (e) {
-		let errorMessage = e?.response?.data?.error ?? 'An error occurred.';
+		setTimeout(() => {
 
-		return rejectWithValue(errorMessage);
-	}
-});
+			resolve({
+				id,
+				username: 'User',
+				avatar: '/images/user-avatar-default.jpg',
+			})
 
-export const register = createAsyncThunk(`${name}/register`, async (user = {}, {rejectWithValue}) => {
-	try {
-		const res = await axios.post('https://reqres.in/api/register', user);
+		}, 1000);
 
-		let token = res?.data?.token;
-
-		if (token) {
-			cookie.set('token', 1, {
-				expires: 1,
-				path: '/',
-			});
-
-			Router.replace(routes.home);
-		}
-	} catch (e) {
-		let errorMessage = e?.response?.data?.error ?? 'An error occurred.';
-
-		return rejectWithValue(errorMessage);
-	}
-});
-
-export const logout = createAsyncThunk(`${name}/logout`, () => {
-	cookie.remove('token', {
-		expires: 1,
 	});
 
-	Router.replace(routes.login);
+	let res = await expensivePromise;
+
+	return res;
+
+});
+
+export const login = createAsyncThunk(`${name}/login`, async (data: UserData, { rejectWithValue }) => {
+	
+	let expensivePromise = new Promise((resolve, reject) => {
+
+		setTimeout(() => {
+
+			let { email, password } = data;
+
+			if (!email && !password) {
+
+				reject({
+					other: i18n.t('common:missing_email_password'),
+					email: i18n.t('common:missing_email'),
+					password: i18n.t('common:missing_password')
+				});
+
+			}
+
+			if (!email) {
+					
+				reject({email: i18n.t('common:missing_email')});
+				
+			}
+
+			if (!password) {
+			
+				reject({password: i18n.t('common:missing_password')});
+		
+			}
+
+			resolve('very expensive response')
+			
+		}, 1000);
+
+	});
+	
+	try {
+
+		let res = await expensivePromise;
+		
+		if (res) {
+
+			cookie.set('token', '1', {
+				expires: 1,
+				path: '/',
+			});
+
+			Router.replace(routes.home);
+
+			return null;
+
+		}
+
+		return rejectWithValue({other: i18n.t('common:login_error')})
+
+	} catch (e) {
+
+		return rejectWithValue(e);
+
+	}
+
+});
+
+export const register = createAsyncThunk(`${name}/register`, async (data: UserData, { rejectWithValue }) => {
+	
+	let expensivePromise = new Promise((resolve, reject) => {
+
+		setTimeout(() => {
+
+			let { email, password, repeatPassword } = data;
+
+			if (!email && !password) {
+
+				reject({
+					other: i18n.t('common:missing_email_password'),
+					email: i18n.t('common:missing_email'),
+					password: i18n.t('common:missing_password'),
+					repeatPassword: i18n.t('common:missing_repeat_password')
+				});
+
+			}
+
+			if (!email) {
+					
+				reject({email: i18n.t('common:missing_email')});
+				
+			}
+
+			if (!password) {
+					
+				reject({password: i18n.t('common:missing_password')});
+				
+			}
+
+			if (!repeatPassword) {
+					
+				reject({repeatPassword: i18n.t('common:missing_repeat_password')});
+				
+			}
+
+			if (password !== repeatPassword) {
+
+				reject({other: i18n.t('common:no_match_passwords')});
+
+			}
+
+			resolve('very expensive response')
+			
+		}, 1000);
+
+	});
+	
+	try {
+
+		let res = await expensivePromise;
+		
+		if (res) {
+
+			cookie.set('token', '1', {
+				expires: 1,
+				path: '/',
+			});
+
+			Router.replace(routes.home);
+
+			return null;
+
+		}
+
+		return rejectWithValue({other: i18n.t('common:register_error')})
+
+	} catch (e) {
+
+		return rejectWithValue(e);
+
+	}
+
+});
+
+export const logout = createAsyncThunk(`${name}/logout`, async () => {
+
+	let expensivePromise = new Promise((resolve) => {
+
+		setTimeout(() => {
+			
+			resolve('very expensive response');
+
+		}, 1000);
+
+	});
+
+	let res = await expensivePromise;
+
+	if (res) {
+
+		cookie.remove('token', {
+			expires: 1,
+		});	
+
+		Router.replace(routes.login);
+		
+	}
+
+	return null;
+ 
 });
 
 export const authSlice = createSlice({
 	name,
 	initialState,
-	reducers: {},
-	extraReducers: {
-		[HYDRATE]: (state, {payload}) => {
+	reducers: {
+		clearAuthUser: (state) => {
+			state.user = {...initialState.user};
+		}
+	},
+	extraReducers: builder => {
+		builder.addCase(HYDRATE, (state, {payload}: any) => {
+
 			return {
 				...state,
 				...payload[name],
-			};
-		},
-		[login.pending]: state => {
-			state.loginError = '';
+			};	
+
+		})
+		builder.addCase(setAuthUser.pending, (state) => {
+			state.user.isFetching = true;
+		})
+		builder.addCase(setAuthUser.fulfilled, (state, { payload }: any) => {
+			state.user.id = payload.id;
+			state.user.username = payload.username;
+			state.user.avatar = payload.avatar;
+			state.user.isLoggedIn = true;
+			state.user.isFetching = false;
+		})
+		builder.addCase(setAuthUser.rejected, (state) => {
+			state.user = {...initialState.user};
+		})
+		builder.addCase(login.pending, (state) => {
+			state.loginErrors = {...initialState.loginErrors};
 			state.isLoggingIn = true;
-		},
-		[login.fulfilled]: state => {
+		})
+		builder.addCase(login.fulfilled, (state) => {
 			state.isLoggingIn = false;
-		},
-		[login.rejected]: (state, {payload}) => {
+		})
+		builder.addCase(login.rejected, (state, {payload}: any) => {
 			state.isLoggingIn = false;
-			state.loginError = payload;
-		},
-		[register.pending]: state => {
-			state.registerError = '';
+			state.loginErrors = {...initialState.loginErrors, ...payload};
+		})
+		builder.addCase(register.pending, (state) => {
+			state.registerErrors = {...initialState.registerErrors};
 			state.isRegistering = true;
-		},
-		[register.fulfilled]: state => {
+		})
+		builder.addCase(register.fulfilled, (state) => {
 			state.isRegistering = false;
-		},
-		[register.rejected]: (state, {payload}) => {
+		})
+		builder.addCase(register.rejected, (state, {payload}: any) => {
 			state.isRegistering = false;
-			state.registerError = payload;
-		},
-		[logout.pending]: state => {
+			state.registerErrors = {...initialState.registerErrors, ...payload};
+		})
+		builder.addCase(logout.pending, (state) => {
 			state.logoutError = '';
 			state.isLoggingOut = true;
-		},
-		[logout.fulfilled]: state => {
+		})
+		builder.addCase(logout.fulfilled, (state) => {
 			state.isLoggingOut = false;
-		},
-		[logout.rejected]: state => {
-			state.logoutError = "Oops! We couldn't log you out.";
-		},
-	},
+		})
+		builder.addCase(logout.rejected, (state) => {
+			state.logoutError = i18n.t('common:logout_error');
+		})
+	}
 });
 
-export const selectAuth = state => state[name];
+export const { clearAuthUser } = authSlice.actions;
+
+export const selectAuth = (state: RootState): AuthState => state[name];
 
 export default authSlice.reducer;
