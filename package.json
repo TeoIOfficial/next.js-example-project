@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "yarn cache clean && next telemetry disable && next dev",
     "build": "yarn cache clean && next telemetry disable && next build",
-    "start": "next start",
+    "start": "yarn cache clean && next telemetry disable && next start",
     "lint": "next lint"
   },
   "dependencies": {

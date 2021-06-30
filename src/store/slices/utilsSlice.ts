@@ -85,10 +85,7 @@ export const utilsSlice = createSlice({
 			
 			let { payload } = action;
 
-			state.browser = {
-				name: payload.name,
-				version: payload.version,
-			};
+			state.browser = {...payload};
 
 		},
 	},
@@ -105,6 +102,6 @@ export const utilsSlice = createSlice({
 
 export const {setIsMobile, setBrowser} = utilsSlice.actions;
 
-export const selectUtils = (state: RootState): UtilsState => state[name];
+export const selectUtils = (state: RootState): UtilsState  => state[name];
 
 export default utilsSlice.reducer;

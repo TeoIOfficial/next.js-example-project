@@ -95,9 +95,9 @@ module.exports = {
 		];
 	},
 	reactStrictMode: true,
-	images: {
-		domains: [],
-	},
+	// images: {
+	// 	domains: [],
+	// },
 	sassOptions: {
 		includePaths: [path.join(__dirname, 'src/styles')],
 	},

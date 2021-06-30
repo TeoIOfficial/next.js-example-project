@@ -2,13 +2,13 @@ export const isBrowser = typeof window !== 'undefined';
 
 export type Browser = {
 	name: string,
-	version: string
+	version: string | null
 }
 
 export const getBrowser = (userAgent: string): Browser => {
 
 	let browser = '';
-
+	
 	const browserVersion = (userAgent: string, regex: RegExp) => (userAgent.match(regex) ? userAgent.match(regex)[2] : null);
 
 	// Detect browser name

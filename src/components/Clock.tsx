@@ -1,4 +1,4 @@
-import { useState, useEffect, FC, ReactElement, ReactChildren } from 'react';
+import { useState, useEffect, ReactElement, } from 'react';
 import moment from 'moment';
 
 type ClockProps = {

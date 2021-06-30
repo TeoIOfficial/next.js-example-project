@@ -35,3 +35,7 @@ $breadcrumb-divider: quote(">");
 
 // Utilities
 @import "~bootstrap/scss/utilities/api";
+
+// App
+
+@import "./app.scss";

@@ -7,5 +7,9 @@ module.exports = {
 		interpolation: {
 			escapeValue: false, // react already safes from xss
 		},
+		// debug: process.env.NODE_ENV !== 'production',
+		fallbackLng: 'en',
+		preload: true,
+		cleanCode: true,
 	},
 };

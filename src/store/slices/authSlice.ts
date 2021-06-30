@@ -135,7 +135,7 @@ export const login = createAsyncThunk(`${name}/login`, async (data: UserData, { 
 
 			Router.replace(routes.home[Router.locale]);
 
-			return null;
+			return;
 
 		}
 
@@ -211,7 +211,7 @@ export const register = createAsyncThunk(`${name}/register`, async (data: UserDa
 
 			Router.replace(routes.home[Router.locale]);
 
-			return null;
+			return;
 
 		}
 
@@ -235,7 +235,7 @@ export const logout = createAsyncThunk(`${name}/logout`, async () => {
 
 		}, 1000);
 
-	});
+	});	
 
 	let res = await expensivePromise;
 
@@ -249,7 +249,7 @@ export const logout = createAsyncThunk(`${name}/logout`, async () => {
 		
 	}
 
-	return null;
+	return;
  
 });
 
